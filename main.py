@@ -4,7 +4,7 @@ from PIL import Image
 import io, base64
 
 
-
+#Defining function to create watermark 
 def create_watermark(input_pdf, output, watermark_type, watermark):
     pdf_reader = PdfReader(input_pdf)
     pdf_writer = PdfWriter()
