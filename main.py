@@ -4,6 +4,7 @@ from PIL import Image
 import io, base64
 
 
+
 def create_watermark(input_pdf, output, watermark_type, watermark):
     pdf_reader = PdfReader(input_pdf)
     pdf_writer = PdfWriter()
@@ -29,7 +30,7 @@ def create_watermark(input_pdf, output, watermark_type, watermark):
         for page_number in range(len(pdf_reader.pages)):
             page = pdf_reader.pages[page_number]
             watermark_page = PdfWriter().add_blank_page(
-                page.mediabox.getWidth(), page.mediaBox.getHeight())
+                page.mediabox.width(), page.mediaBox.height())
             watermark_page.merge_page(PdfReader(io.BytesIO()).get_page(0))
             watermark_page.merge_page(page)
             pdf_writer.add_page(watermark_page.pages[0])
@@ -51,7 +52,7 @@ def create_watermark(input_pdf, output, watermark_type, watermark):
 
             watermark_text_page.merge_translated_page(
                 PdfReader(io.BytesIO()).get_page(0),
-                (page.mediaBox.Width() - watermark_text_width) / 2,
+                (page.mediaBox.width() - watermark_text_width) / 2,
                 (page.mediaBox.Height() - watermark_text_height) / 2,
                 expand=True)
             watermark_page.merge_page(watermark_text_page.pages[0])
