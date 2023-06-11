@@ -1,5 +1,5 @@
 import streamlit as st
-from PyPDF2 import PdfFileWriter, PdfFileReader
+from PyPDF2 import PdfFileWriter, PdfReader
 from PIL import Image
 import io, base64
 
