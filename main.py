@@ -51,8 +51,8 @@ def create_watermark(input_pdf, output, watermark_type, watermark):
 
             watermark_text_page.merge_translated_page(
                 PdfReader(io.BytesIO()).get_page(0),
-                (page.mediaBox.getWidth() - watermark_text_width) / 2,
-                (page.mediaBox.getHeight() - watermark_text_height) / 2,
+                (page.mediaBox.Width() - watermark_text_width) / 2,
+                (page.mediaBox.Height() - watermark_text_height) / 2,
                 expand=True)
             watermark_page.merge_page(watermark_text_page.pages[0])
             pdf_writer.add_page(watermark_page.pages[0])
