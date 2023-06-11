@@ -1,7 +1,7 @@
-import streamlit as st
-from PyPDF2 import PdfWriter, PdfReader
 from PIL import Image
 import io, base64
+import streamlit as st
+from PyPDF2 import PdfFileWriter, PdfFileReader
 
 
 def create_watermark(input_pdf, output, watermark_type, watermark):
