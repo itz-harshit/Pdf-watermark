@@ -3,6 +3,9 @@ from PyPDF2 import PdfWriter, PdfReader
 from PIL import Image
 import io, base64
 
+
+
+
 def create_watermark(input_pdf, output, watermark_type, watermark):
     pdf_reader = PdfReader(input_pdf)
     pdf_writer = PdfWriter()
@@ -28,7 +31,7 @@ def create_watermark(input_pdf, output, watermark_type, watermark):
         for page_number in range(len(pdf_reader.pages)):
             page = pdf_reader.pages[page_number]
             watermark_page = PdfWriter().add_blank_page(
-                page.media_box.get_width(), page.media_box.get_height())
+                page.mediaBox.getWidth(), page.mediaBox.getHeight())
             watermark_page.merge_page(PdfReader(io.BytesIO()).get_page(0))
             watermark_page.merge_page(page)
             pdf_writer.add_page(watermark_page.pages[0])
@@ -50,15 +53,14 @@ def create_watermark(input_pdf, output, watermark_type, watermark):
 
             watermark_text_page.merge_translated_page(
                 PdfReader(io.BytesIO()).get_page(0),
-                (page.media_box.get_width() - watermark_text_width) / 2,
-                (page.media_box.get_height() - watermark_text_height) / 2,
+                (page.mediaBox.getWidth() - watermark_text_width) / 2,
+                (page.mediaBox.getHeight() - watermark_text_height) / 2,
                 expand=True)
             watermark_page.merge_page(watermark_text_page.pages[0])
             pdf_writer.add_page(watermark_page.pages[0])
 
     with open(output, 'wb') as out:
         pdf_writer.write(out)
-
 
 
 def main():
