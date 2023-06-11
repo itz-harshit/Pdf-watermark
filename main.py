@@ -4,62 +4,59 @@ from PIL import Image
 import io, base64
 
 
-#Defining function to create watermark 
 def create_watermark(input_pdf, output, watermark_type, watermark):
-    pdf_reader = PdfReader(input_pdf)
-    pdf_writer = PdfWriter()
+    pdf_reader = PdfFileReader(input_pdf)
+    pdf_writer = PdfFileWriter()
 
     if watermark_type == 'Image':
+        print("Watermark Type: Image")
         # Open the image
         image = Image.open(watermark).convert("RGBA")
-        watermark_page = PdfWriter().add_blank_page(
-            image.width, image.height)
-        watermark_page.merge_translated_page(
-            PdfReader(io.BytesIO()).get_page(0), 0, 0, expand=True)
-        watermark_page.merge_page(
-            PdfReader(io.BytesIO()).get_page(0))
+        print("Image size:", image.size)
+        watermark_page = PdfFileWriter().addBlankPage(image.width, image.height)
+        watermark_page.mergeTranslatedPage(PdfFileReader(io.BytesIO()).getPage(0), 0, 0, expand=True)
+        watermark_page.mergePage(PdfFileReader(io.BytesIO()).getPage(0))
 
         # Watermark all the pages
-        for page_number in range(len(pdf_reader.pages)):
-            page = pdf_reader.pages[page_number]
-            page.merge_page(watermark_page.pages[0])
-            pdf_writer.add_page(page)
+        for page_number in range(pdf_reader.getNumPages()):
+            page = pdf_reader.getPage(page_number)
+            page.mergePage(watermark_page.getPage(0))
+            pdf_writer.addPage(page)
 
     elif watermark_type == 'Text':
+        print("Watermark Type: Text")
         # Watermark all the pages with the text
-        for page_number in range(len(pdf_reader.pages)):
-            page = pdf_reader.pages[page_number]
-            watermark_page = PdfWriter().add_blank_page(
-                page.mediabox.width(), page.mediaBox.height())
-            watermark_page.merge_page(PdfReader(io.BytesIO()).get_page(0))
-            watermark_page.merge_page(page)
-            pdf_writer.add_page(watermark_page.pages[0])
+        for page_number in range(pdf_reader.getNumPages()):
+            page = pdf_reader.getPage(page_number)
+            watermark_page = PdfFileWriter().addBlankPage(page.mediaBox.getWidth(), page.mediaBox.getHeight())
+            watermark_page.mergePage(PdfFileReader(io.BytesIO()).getPage(0))
+            watermark_page.mergePage(page)
+            pdf_writer.addPage(watermark_page.getPage(0))
 
             # Add the text watermark
-            pdf_writer.add_page(page)
+            pdf_writer.addPage(page)
 
-              # Add the watermark text
+            # Add the watermark text
             watermark_text = watermark
-            watermark_text_width = watermark_text.get_size()[0]
-            watermark_text_height = watermark_text.get_size()[1]
+            print("Watermark Text:", watermark_text)
+            watermark_text_width = watermark_text.getsize()[0]
+            watermark_text_height = watermark_text.getsize()[1]
 
-            watermark_text_page = PdfWriter().add_blank_page(
-                watermark_text_width, watermark_text_height)
-            watermark_text_page.merge_translated_page(
-                PdfReader(io.BytesIO()).get_page(0), 0, 0, expand=True)
-            watermark_text_page.merge_page(
-                PdfReader(io.BytesIO()).get_page(0))
-            watermark_text_page.merge_translated_page(
-                PdfReader(io.BytesIO()).get_page(0),
-                (page.mediabox.getUpperRight()[0] - watermark_text_width) / 2,
-                (page.mediabox.getUpperRight()[1] - watermark_text_height) / 2,
+            watermark_text_page = PdfFileWriter().addBlankPage(watermark_text_width, watermark_text_height)
+            watermark_text_page.mergeTranslatedPage(PdfFileReader(io.BytesIO()).getPage(0), 0, 0, expand=True)
+            watermark_text_page.mergePage(PdfFileReader(io.BytesIO()).getPage(0))
+
+            watermark_text_page.mergeTranslatedPage(
+                PdfFileReader(io.BytesIO()).getPage(0),
+                (page.mediaBox.getWidth() - watermark_text_width) / 2,
+                (page.mediaBox.getHeight() - watermark_text_height) / 2,
                 expand=True)
-
-            watermark_page.merge_page(watermark_text_page.pages[0])
-            pdf_writer.add_page(watermark_page.pages[0])
+            watermark_page.mergePage(watermark_text_page.getPage(0))
+            pdf_writer.addPage(watermark_page.getPage(0))
 
     with open(output, 'wb') as out:
         pdf_writer.write(out)
+
 
 
 def main():
